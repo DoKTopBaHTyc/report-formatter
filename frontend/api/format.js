@@ -33,7 +33,8 @@ export default async function handler(req, res) {
 Выдай результат так, чтобы каждая строка стала параграфом; заголовки H1:, H2:, H3:; списки — "- " перед элементом.
 `;
 
-    // 4) Вызов OpenRouter
+    // 4) Вызов OpenRouter (закомментировано для теста без сети)
+
     const openaiResp = await fetch(
       "https://api.openrouter.ai/v1/chat/completions",
       {
@@ -66,7 +67,13 @@ export default async function handler(req, res) {
     const data = await openaiResp.json();
     const fixedText = data?.choices?.[0]?.message?.content || "";
 
-    // 5) Собираем docx
+    // 5) Заглушка для локального теста
+    //     const fixedText = `Это тестовый текст. Каждая строка станет параграфом.
+    // H1: Заголовок 1
+    // - Список элемент 1
+    // - Список элемент 2`;
+
+    // 6) Собираем docx
     const paragraphs = fixedText
       .split(/\r?\n/)
       .map((line) => new Paragraph({ children: [new TextRun(line)] }));
@@ -75,7 +82,7 @@ export default async function handler(req, res) {
     });
     const buffer = await Packer.toBuffer(doc);
 
-    // 6) Отправляем клиенту
+    // 7) Отправляем клиенту
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
